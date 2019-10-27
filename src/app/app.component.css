@@ -1,0 +1,196 @@
+@import url('https://fonts.googleapis.com/css?family=Poppins:900i');
+
+@font-face {
+  font-family: Gisha;
+  src: local(Gisha), url(../assets/fonts/gisha.ttf)
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  background-image: url("../assets/img/hebrewletters.jpg");
+  margin: 0;
+  padding: 0;
+}
+
+.title {
+  font-family: Gisha;
+}
+
+.box {
+  display: flex;
+  width: 80vw;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 10px;
+}
+
+.box-row {
+  display: flex;
+  width: 80vw;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  padding: 0;
+}
+
+input {
+  width: 500px;
+  height: 50px;
+  padding: 10px 10px 10px 30px;
+  font-size: 30px;
+  border: 1px solid #800080;
+  border-radius: 20px;
+  box-sizing: border-box;
+}
+
+input::placeholder {
+  font-family: "Arial", sans-serif;
+  font-size: 18px;
+  padding-left: 20px;
+}
+
+input:focus {
+  box-shadow: 1px 2px 4px rgba(128, 0, 128, .9);
+}
+
+.simple-keyboard {
+  max-width: 800px;
+}
+
+.input {
+  font-family: Gisha;
+  margin-bottom: 20px;
+}
+
+.input:focus {
+  outline: none;
+}
+
+button{
+  background:#800080;
+  color:#fff;
+  border:none;
+  position:relative;
+  height:50px;
+  font-size:1.6em;
+  padding:0 2em;
+  cursor:pointer;
+  transition:800ms ease all;
+  outline:none;
+  margin-bottom: 20px;
+  margin-left: 20px;
+}
+
+button:hover{
+  background: transparent;
+  color:#800080;
+}
+
+button:before,button:after{
+  content:'';
+  position:absolute;
+  top:0;
+  right:0;
+  height:5px;
+  width:0;
+  background: #800080;
+  transition:400ms ease all;
+}
+
+button:after {
+  right: inherit;
+  top: inherit;
+  left: 0;
+  bottom: 0;
+}
+
+button:hover:before,button:hover:after{
+  width:100%;
+  transition:800ms ease all;
+}
+
+.hebraico {
+  display: flex;
+  flex-direction: row;
+  font-family: Gisha;
+  font-size: 42px;
+  margin-top: 10px;
+  margin-bottom: 0;
+  padding: 0;
+  width: 50px;
+  justify-content: center;
+  justify-items: center;
+  color: #fff;
+}
+
+.box-row-reverse {
+  flex-direction: row-reverse;
+  padding: 0;
+}
+
+.valorNumerico {
+  display: flex;
+  flex-direction: row;
+  font-family: "Arial", sans-serif;
+  font-size: 16px;
+  margin-top: 0;
+  padding: 0;
+  width: 50px;
+  justify-content: center;
+  justify-items: center;
+  font-weight: bold;
+  color: #fff;
+}
+
+.resultado {
+  font-family: Arial, sans-serif;
+  font-size: 20px;
+  margin-top: 10px;
+  color: #fff;
+  padding-left: 20px;
+}
+
+.resultado:last-child {
+  padding-bottom: 20px;
+}
+
+.box-resultado {
+  width: 100%;
+  background-color: rgba(0, 0, 0, .8);
+  margin-top: 10px;
+  border-radius: 20px;
+}
+
+/*
+  Theme: myTheme1
+*/
+.simple-keyboard.myTheme1 {
+  background-color: rgba(0, 0, 0, 0.8);
+  border-radius: 0 0 5px 5px;
+  font-family: Gisha;
+}
+
+.simple-keyboard.myTheme1 .hg-button {
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+}
+
+.simple-keyboard.myTheme1 .hg-button:active {
+  background: #1c4995;
+  color: white;
+}
+
+#root .simple-keyboard.myTheme1 + .simple-keyboard-preview {
+  background: #1c4995;
+}
