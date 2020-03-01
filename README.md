@@ -9,9 +9,6 @@ Calcula o valor numérico e a raiz das palavras hebraicas de acordo com a gematr
 
 ### Tecnologias
 - Angular
-- API Restful
-- NodeJS
-- AdonisJS
 
 ### Screenshot
 
