@@ -1,3 +1,12 @@
+const wordInput = document.getElementById("word-input");
+const calculateButton = document.getElementById("calculate-button");
+const keyboardRoot = document.getElementById("keyboard");
+const resultBox = document.getElementById("result-box");
+const hebrewRow = document.getElementById("hebrew-row");
+const valuesRow = document.getElementById("values-row");
+const resultValue = document.getElementById("result-value");
+const resultRoot = document.getElementById("result-root");
+
 const letterValues = {
   "א": 1,
   "ב": 2,
@@ -25,203 +34,261 @@ const letterValues = {
   "ק": 100,
   "ר": 200,
   "ש": 300,
-  "ת": 400
+  "ת": 400,
 };
 
 const keyboardLayout = {
   default: [
-    ["ק", "ר", "א", "ט", "ו", "ן", "ם", "פ"],
-    ["ש", "ד", "ג", "כ", "ע", "י", "ח", "ל", "ך", "ף"],
-    ["ז", "ס", "ב", "ה", "נ", "מ", "צ", "ת", "ץ"],
-    ["{space}", "{bksp}"]
+    ["א", "ב", "ג", "ד", "ה", "ו", "ז", "ח", "ט", "י"],
+    ["כ", "ל", "מ", "נ", "ס", "ע", "פ", "צ", "ק", "ר"],
+    ["ש", "ת", "ך", "ם", "ן", "ף", "ץ"],
+    ["{space}", "{bksp}", "{reset}"],
   ],
 };
 
 const keyLabels = {
-  "{enter}": "Enter",
   "{bksp}": "Backspace",
-  "{tab}": "Tab",
-  "{shift}": "Shift",
   "{space}": "Space",
-  "{lock}": "Caps Lock"
+  "{reset}": "Reset",
 };
 
-const input = document.getElementById("palavra");
-const calcularBtn = document.getElementById("calcular");
-const keyboardRoot = document.getElementById("keyboard");
-const linhaHebraico = document.getElementById("linha-hebraico");
-const linhaValores = document.getElementById("linha-valores");
-const resultadoValor = document.getElementById("resultado-valor");
-const resultadoRaiz = document.getElementById("resultado-raiz");
+const letterNames = {
+  "א": "Alef",
+  "ב": "Bet",
+  "ג": "Guimel",
+  "ד": "Dalet",
+  "ה": "He",
+  "ו": "Vav",
+  "ז": "Zayin",
+  "ח": "Chet",
+  "ט": "Tet",
+  "י": "Yod",
+  "כ": "Kaf",
+  "ך": "Kaf sofit",
+  "ל": "Lamed",
+  "מ": "Mem",
+  "ם": "Mem sofit",
+  "נ": "Nun",
+  "ן": "Nun sofit",
+  "ס": "Samekh",
+  "ע": "Ayin",
+  "פ": "Pe",
+  "ף": "Pe sofit",
+  "צ": "Tsadi",
+  "ץ": "Tsadi sofit",
+  "ק": "Qof",
+  "ר": "Resh",
+  "ש": "Shin",
+  "ת": "Tav",
+};
 
-let layoutName = "default";
-let capsLock = false;
+const finalLetterMap = {
+  "כ": "ך",
+  "מ": "ם",
+  "נ": "ן",
+  "פ": "ף",
+  "צ": "ץ",
+};
 
-function digitalRoot(number) {
+const reverseFinalLetterMap = Object.fromEntries(
+  Object.entries(finalLetterMap).map(([regularLetter, finalForm]) => [finalForm, regularLetter])
+);
+
+const digitalRoot = (number) => {
   let root = number;
+
   while (root >= 10) {
     root = String(root)
       .split("")
       .reduce((acc, digit) => acc + Number(digit), 0);
   }
+
   return root;
-}
+};
 
-function normalizeHebrew(word) {
-  return word.replace(/[\u0591-\u05C7\u05BE\u05C0\u05C3\s]/g, "");
-}
+const normalizeHebrew = (word) => word.replace(/[\u0591-\u05C7\u05BE\u05C0\u05C3]/g, "");
 
-function renderRows(letters, values) {
-  linhaHebraico.innerHTML = "";
-  linhaValores.innerHTML = "";
+const applyFinalLetters = (text) => {
+  const words = text.split(" ");
+
+  return words
+    .map((word) => {
+      if (!word) {
+        return "";
+      }
+
+      const letters = [...word].map((letter, index, array) => {
+        if (index < array.length - 1) {
+          return reverseFinalLetterMap[letter] || letter;
+        }
+
+        return finalLetterMap[letter] || letter;
+      });
+
+      return letters.join("");
+    })
+    .join(" ");
+};
+
+const normalizeInputValue = (value) => applyFinalLetters(normalizeHebrew(value));
+
+const updateInputValue = (value, cursorPosition = value.length) => {
+  const normalizedValue = normalizeInputValue(value);
+
+  wordInput.value = normalizedValue;
+
+  const safePosition = Math.min(cursorPosition, normalizedValue.length);
+
+  wordInput.setSelectionRange(safePosition, safePosition);
+  wordInput.focus();
+
+  return normalizedValue;
+};
+
+const renderRows = (letters, values) => {
+  hebrewRow.innerHTML = "";
+  valuesRow.innerHTML = "";
 
   letters.forEach((letter) => {
     const letterEl = document.createElement("div");
+
     letterEl.className = "hebraico";
     letterEl.textContent = letter;
-    linhaHebraico.appendChild(letterEl);
+    hebrewRow.appendChild(letterEl);
   });
 
   values.forEach((value) => {
     const valueEl = document.createElement("div");
+
     valueEl.className = "valorNumerico";
     valueEl.textContent = String(value);
-    linhaValores.appendChild(valueEl);
+    valuesRow.appendChild(valueEl);
   });
-}
+};
 
-function calcularGematria(word) {
-  const valorNumerico = [...word].reduce(
+const resetCalculator = () => {
+  wordInput.value = "";
+  resultBox.hidden = true;
+  hebrewRow.innerHTML = "";
+  valuesRow.innerHTML = "";
+  resultValue.textContent = "";
+  resultRoot.textContent = "";
+  wordInput.focus();
+};
+
+const calculateGematria = (word) => {
+  const cleanedWord = normalizeInputValue(word);
+
+  const numericValue = [...cleanedWord].reduce(
     (acc, letter) => acc + (letterValues[letter] || 0),
     0
   );
 
-  const cleanedWord = normalizeHebrew(word);
-  const letrasHebraico = [...cleanedWord];
-  const letrasValor = letrasHebraico.map((letter) => letterValues[letter] || "");
+  const hebrewLetters = [...cleanedWord];
+  const letterValuesRow = hebrewLetters.map((letter) => letterValues[letter] || "");
 
-  renderRows(letrasHebraico, letrasValor);
+  renderRows(hebrewLetters, letterValuesRow);
+  updateInputValue(cleanedWord);
 
-  if (valorNumerico > 0) {
-    resultadoValor.textContent = `Valor Numérico: ${valorNumerico}`;
-    resultadoRaiz.textContent = `Raiz: ${digitalRoot(valorNumerico)}`;
+  if (numericValue > 0) {
+    resultBox.hidden = false;
+    resultValue.textContent = `Valor Numérico: ${numericValue}`;
+    resultRoot.textContent = `Raiz: ${digitalRoot(numericValue)}`;
   } else {
-    resultadoValor.textContent = "";
-    resultadoRaiz.textContent = "";
+    resetCalculator();
   }
+};
 
-  input.value = "";
-}
-
-function insertAtCursor(text) {
-  const start = input.selectionStart ?? input.value.length;
-  const end = input.selectionEnd ?? input.value.length;
-  input.value = input.value.slice(0, start) + text + input.value.slice(end);
+const insertAtCursor = (text) => {
+  const start = wordInput.selectionStart ?? wordInput.value.length;
+  const end = wordInput.selectionEnd ?? wordInput.value.length;
+  const nextValue = wordInput.value.slice(0, start) + text + wordInput.value.slice(end);
   const pos = start + text.length;
-  input.setSelectionRange(pos, pos);
-  input.focus();
-}
 
-function removeAtCursor() {
-  const start = input.selectionStart ?? input.value.length;
-  const end = input.selectionEnd ?? input.value.length;
+  updateInputValue(nextValue, pos);
+};
+
+const removeAtCursor = () => {
+  const start = wordInput.selectionStart ?? wordInput.value.length;
+  const end = wordInput.selectionEnd ?? wordInput.value.length;
 
   if (start !== end) {
-    input.value = input.value.slice(0, start) + input.value.slice(end);
-    input.setSelectionRange(start, start);
+    updateInputValue(wordInput.value.slice(0, start) + wordInput.value.slice(end), start);
+
     return;
   }
 
   if (start > 0) {
-    input.value = input.value.slice(0, start - 1) + input.value.slice(end);
-    input.setSelectionRange(start - 1, start - 1);
+    updateInputValue(wordInput.value.slice(0, start - 1) + wordInput.value.slice(end), start - 1);
   }
-}
+};
 
-function setLayoutFromCaps() {
-  layoutName = capsLock ? "shift" : "default";
-  renderKeyboard();
-}
-
-function toggleShift() {
-  layoutName = layoutName === "default" ? "shift" : "default";
-  renderKeyboard();
-}
-
-function handleKeyPress(key) {
+const handleKeyPress = (key) => {
   if (key === "{bksp}") {
     removeAtCursor();
+
     return;
   }
 
   if (key === "{space}") {
     insertAtCursor(" ");
+
     return;
   }
 
-  if (key === "{tab}") {
-    insertAtCursor("\t");
-    return;
-  }
+  if (key === "{reset}") {
+    resetCalculator();
 
-  if (key === "{enter}") {
-    calcularGematria(input.value);
-    return;
-  }
-
-  if (key === "{lock}") {
-    capsLock = !capsLock;
-    setLayoutFromCaps();
-    return;
-  }
-
-  if (key === "{shift}") {
-    toggleShift();
     return;
   }
 
   insertAtCursor(key);
+};
 
-  if (!capsLock && layoutName === "shift") {
-    layoutName = "default";
-    renderKeyboard();
+const getKeyClass = (key) => {
+  if (key === "{space}") {
+    return "keyboard-key space";
   }
-}
 
-function keyClass(key) {
-  if (key === "{space}") return "keyboard-key space";
-  if (key.startsWith("{")) return "keyboard-key wide";
+  if (key.startsWith("{")) {
+    return "keyboard-key wide";
+  }
+
   return "keyboard-key";
-}
+};
 
-function renderKeyboard() {
+const renderKeyboard = () => {
   keyboardRoot.innerHTML = "";
 
-  keyboardLayout[layoutName].forEach((row) => {
+  keyboardLayout.default.forEach((row) => {
     const rowEl = document.createElement("div");
+  
     rowEl.className = "keyboard-row";
 
     row.forEach((key) => {
       const keyEl = document.createElement("button");
+
       keyEl.type = "button";
-      keyEl.className = keyClass(key);
+      keyEl.className = getKeyClass(key);
       keyEl.textContent = keyLabels[key] || key;
+      keyEl.title = letterNames[key] || "";
+      keyEl.addEventListener("mousedown", (event) => event.preventDefault());
       keyEl.addEventListener("click", () => handleKeyPress(key));
       rowEl.appendChild(keyEl);
     });
 
     keyboardRoot.appendChild(rowEl);
   });
-}
+};
 
-input.addEventListener("keydown", (event) => {
-  if (event.key === "Enter") {
-    calcularGematria(input.value);
-  }
+wordInput.addEventListener("input", () => {
+  const start = wordInput.selectionStart ?? wordInput.value.length;
+
+  updateInputValue(wordInput.value, start);
 });
 
-calcularBtn.addEventListener("click", () => {
-  calcularGematria(input.value);
+calculateButton.addEventListener("click", () => {
+  calculateGematria(wordInput.value);
 });
 
 renderKeyboard();
