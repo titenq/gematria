@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Calculadora Gematria</title>
+  <link rel="icon" type="image/x-icon" href="./assets/favicon.ico">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="box">
+    <h2 class="title">Calculadora Gematria</h2>
+
+    <div class="box-row">
+      <input id="palavra" class="input question" type="text" placeholder="Digite ou cole a palavra aqui.">
+      <button id="calcular" type="button">Calcular</button>
+    </div>
+
+    <div id="keyboard" class="simple-keyboard myTheme1"></div>
+
+    <div class="box-resultado">
+      <div id="linha-hebraico" class="box-row box-row-reverse"></div>
+      <div id="linha-valores" class="box-row box-row-reverse"></div>
+      <div id="resultado-valor" class="resultado"></div>
+      <div id="resultado-raiz" class="resultado"></div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

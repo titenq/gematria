@@ -1,0 +1,264 @@
+@font-face {
+  font-family: Gisha;
+  src: local(Gisha), url(assets/fonts/gisha.ttf);
+}
+
+@font-face {
+  font-family: SecularOne;
+  src: local(SecularOne), url(assets/fonts/SecularOne-Regular.ttf);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body,
+button,
+input::placeholder,
+.valorNumerico,
+.resultado {
+  font-family: SecularOne, Arial, sans-serif;
+}
+
+body {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  background-image: url("assets/img/hebrewletters.jpg");
+  margin: 0;
+  padding: 0;
+}
+
+.title {
+  font-family: Gisha, serif;
+}
+
+.box {
+  display: flex;
+  width: 80vw;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 10px;
+}
+
+.box-row {
+  display: flex;
+  width: 80vw;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  padding: 0;
+}
+
+input {
+  width: 500px;
+  height: 50px;
+  padding: 10px 10px 10px 30px;
+  font-size: 30px;
+  border: 1px solid #800080;
+  border-radius: 20px;
+  box-sizing: border-box;
+}
+
+input::placeholder {
+  font-size: 18px;
+  padding-left: 20px;
+}
+
+input:focus {
+  box-shadow: 1px 2px 4px rgba(128, 0, 128, 0.9);
+}
+
+.simple-keyboard {
+  max-width: 800px;
+}
+
+.input {
+  font-family: Gisha, serif;
+  margin-bottom: 20px;
+}
+
+.input:focus {
+  outline: none;
+}
+
+button {
+  background: #800080;
+  color: #fff;
+  border: none;
+  position: relative;
+  height: 50px;
+  font-size: 1.6em;
+  padding: 0 2em;
+  cursor: pointer;
+  transition: color 220ms ease, background-color 220ms ease, font-size 220ms ease;
+  outline: none;
+  margin-bottom: 20px;
+  margin-left: 20px;
+}
+
+button:hover {
+  background: transparent;
+  color: #fff;
+  font-size: 1.5em;
+}
+
+button::before,
+button::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 5px;
+  width: 0;
+  background: #fff;
+  transition: 500ms ease all;
+}
+
+button::after {
+  right: inherit;
+  top: inherit;
+  left: 0;
+  bottom: 0;
+}
+
+button:hover::before,
+button:hover::after {
+  width: 100%;
+  transition: 800ms ease all;
+}
+
+.hebraico {
+  display: flex;
+  flex-direction: row;
+  font-family: Gisha, serif;
+  font-size: 42px;
+  margin-top: 10px;
+  margin-bottom: 0;
+  padding: 0;
+  width: 50px;
+  justify-content: center;
+  justify-items: center;
+  color: #fff;
+}
+
+.box-row-reverse {
+  flex-direction: row-reverse;
+  padding: 0;
+}
+
+.valorNumerico {
+  display: flex;
+  flex-direction: row;
+  font-size: 16px;
+  margin-top: 0;
+  padding: 0;
+  width: 50px;
+  justify-content: center;
+  justify-items: center;
+  font-weight: bold;
+  color: #fff;
+}
+
+.resultado {
+  font-size: 20px;
+  margin-top: 10px;
+  color: #fff;
+  padding-left: 20px;
+}
+
+.resultado:last-child {
+  padding-bottom: 20px;
+}
+
+.box-resultado {
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  margin-top: 10px;
+  border-radius: 20px;
+}
+
+.simple-keyboard.myTheme1 {
+  background-color: rgba(0, 0, 0, 0.8);
+  border-radius: 0 0 5px 5px;
+  font-family: Gisha, serif;
+}
+
+.simple-keyboard.myTheme1 .hg-button {
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+}
+
+.simple-keyboard.myTheme1 .hg-button:active {
+  background: #1c4995;
+  color: #fff;
+}
+
+.keyboard-row {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.keyboard-key {
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  min-width: 34px;
+  cursor: pointer;
+  margin: 0;
+  padding: 0 10px;
+  font-family: Gisha, serif;
+  font-size: 20px;
+  flex: 1 1 auto;
+}
+
+.keyboard-key.wide {
+  flex: 1.8 1 auto;
+}
+
+.keyboard-key.space {
+  flex: 3.6 1 auto;
+}
+
+.keyboard-key:active {
+  background: #fff;
+  color: #000;
+}
+
+@media (max-width: 900px) {
+  .box,
+  .box-row {
+    width: 96vw;
+  }
+
+  .box-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  input {
+    width: 100%;
+    font-size: 24px;
+  }
+
+  button {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .hebraico,
+  .valorNumerico {
+    width: 34px;
+  }
+}
