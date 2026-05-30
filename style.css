@@ -21,12 +21,16 @@ input::placeholder,
 }
 
 body {
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   background-image: url("assets/img/hebrewletters.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
   margin: 0;
   padding: 0;
+  overflow-x: hidden;
 }
 
 .title {
@@ -54,16 +58,23 @@ body {
 input {
   width: 500px;
   height: 50px;
-  padding: 10px 10px 10px 30px;
+  padding: 0 10px 0 30px;
   font-size: 30px;
-  border: 1px solid #800080;
-  border-radius: 20px;
+  line-height: normal;
+  direction: rtl;
+  text-align: right;
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.8);
+  border: none;
+  border-radius: 0;
   box-sizing: border-box;
 }
 
 input::placeholder {
   font-size: 18px;
   padding-left: 20px;
+  color: rgba(255, 255, 255, 0.72);
+  line-height: normal;
 }
 
 input:focus {
@@ -92,16 +103,27 @@ button {
   font-size: 1.6em;
   padding: 0 2em;
   cursor: pointer;
-  transition: color 220ms ease, background-color 220ms ease, font-size 220ms ease;
+  transition: color 220ms ease, background-color 220ms ease;
   outline: none;
   margin-bottom: 20px;
   margin-left: 20px;
 }
 
+#calcular {
+  width: 170px;
+  flex: 0 0 170px;
+  padding: 0;
+}
+
+#calcular:hover {
+  width: 170px;
+  height: 50px;
+  flex-basis: 170px;
+}
+
 button:hover {
   background: transparent;
   color: #fff;
-  font-size: 1.5em;
 }
 
 button::before,
@@ -110,7 +132,7 @@ button::after {
   position: absolute;
   top: 0;
   right: 0;
-  height: 5px;
+  height: 2px;
   width: 0;
   background: #fff;
   transition: 500ms ease all;
@@ -173,16 +195,28 @@ button:hover::after {
 }
 
 .box-resultado {
-  width: 100%;
+  width: 700px;
+  max-width: 100%;
+  height: 170px;
   background-color: rgba(0, 0, 0, 0.8);
   margin-top: 10px;
   border-radius: 20px;
+  overflow: hidden;
+}
+
+.box-resultado .box-row {
+  width: 100%;
+}
+
+.box-resultado-empty {
+  visibility: hidden;
 }
 
 .simple-keyboard.myTheme1 {
   background-color: rgba(0, 0, 0, 0.8);
   border-radius: 0 0 5px 5px;
   font-family: Gisha, serif;
+  padding: 8px;
 }
 
 .simple-keyboard.myTheme1 .hg-button {
@@ -201,6 +235,8 @@ button:hover::after {
 
 .keyboard-row {
   display: flex;
+  direction: rtl;
+  justify-content: center;
   gap: 4px;
   margin-bottom: 4px;
 }
@@ -214,21 +250,41 @@ button:hover::after {
   color: #fff;
   border: none;
   border-radius: 5px;
-  min-width: 34px;
+  width: 50px;
   cursor: pointer;
   margin: 0;
   padding: 0 10px;
   font-family: Gisha, serif;
   font-size: 20px;
-  flex: 1 1 auto;
+  flex: 0 0 50px;
 }
 
 .keyboard-key.wide {
-  flex: 1.8 1 auto;
+  width: 120px;
+  flex-basis: 120px;
 }
 
 .keyboard-key.space {
-  flex: 3.6 1 auto;
+  width: 240px;
+  flex-basis: 240px;
+}
+
+.keyboard-row:last-child .keyboard-key.wide,
+.keyboard-row:last-child .keyboard-key.space {
+  width: auto;
+}
+
+.keyboard-row:last-child {
+  width: 428px;
+  max-width: 100%;
+}
+
+.keyboard-row:last-child .keyboard-key.wide {
+  flex: 1 1 0;
+}
+
+.keyboard-row:last-child .keyboard-key.space {
+  flex: 1 1 0;
 }
 
 .keyboard-key:active {
@@ -255,6 +311,11 @@ button:hover::after {
   button {
     margin-left: 0;
     width: 100%;
+  }
+
+  #calcular {
+    width: 100%;
+    flex-basis: auto;
   }
 
   .hebraico,

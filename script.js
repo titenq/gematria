@@ -30,12 +30,24 @@ const letterValues = {
 
 const keyboardLayout = {
   default: [
-    ["ק", "ר", "א", "ט", "ו", "ן", "ם", "פ"],
-    ["ש", "ד", "ג", "כ", "ע", "י", "ח", "ל", "ך", "ף"],
-    ["ז", "ס", "ב", "ה", "נ", "מ", "צ", "ת", "ץ"],
+    ["א", "ב", "ג", "ד", "ה", "ו", "ז", "ח"],
+    ["ט", "י", "כ", "ל", "מ", "נ", "ס", "ע"],
+    ["פ", "צ", "ק", "ר", "ש", "ת"],
     ["{space}", "{bksp}"]
   ],
 };
+
+const finalForms = {
+  "כ": "ך",
+  "מ": "ם",
+  "נ": "ן",
+  "פ": "ף",
+  "צ": "ץ"
+};
+
+const regularForms = Object.fromEntries(
+  Object.entries(finalForms).map(([regular, final]) => [final, regular])
+);
 
 const keyLabels = {
   "{enter}": "Enter",
@@ -49,6 +61,7 @@ const keyLabels = {
 const input = document.getElementById("palavra");
 const calcularBtn = document.getElementById("calcular");
 const keyboardRoot = document.getElementById("keyboard");
+const resultadoBox = document.querySelector(".box-resultado");
 const linhaHebraico = document.getElementById("linha-hebraico");
 const linhaValores = document.getElementById("linha-valores");
 const resultadoValor = document.getElementById("resultado-valor");
@@ -71,6 +84,29 @@ function normalizeHebrew(word) {
   return word.replace(/[\u0591-\u05C7\u05BE\u05C0\u05C3\s]/g, "");
 }
 
+function isHebrewLetter(letter) {
+  return /^[\u05D0-\u05EA]$/.test(letter);
+}
+
+function normalizeFinalForms(value) {
+  const letters = [...value].map((letter) => regularForms[letter] || letter);
+
+  return letters
+    .map((letter, index) => {
+      if (!finalForms[letter]) return letter;
+
+      const nextLetter = letters[index + 1];
+      return isHebrewLetter(nextLetter) ? letter : finalForms[letter];
+    })
+    .join("");
+}
+
+function updateInputValue(value, cursorPosition) {
+  input.value = normalizeFinalForms(value);
+  input.setSelectionRange(cursorPosition, cursorPosition);
+  input.focus();
+}
+
 function renderRows(letters, values) {
   linhaHebraico.innerHTML = "";
   linhaValores.innerHTML = "";
@@ -90,6 +126,10 @@ function renderRows(letters, values) {
   });
 }
 
+function setResultadoVisible(isVisible) {
+  resultadoBox.classList.toggle("box-resultado-empty", !isVisible);
+}
+
 function calcularGematria(word) {
   const valorNumerico = [...word].reduce(
     (acc, letter) => acc + (letterValues[letter] || 0),
@@ -101,6 +141,7 @@ function calcularGematria(word) {
   const letrasValor = letrasHebraico.map((letter) => letterValues[letter] || "");
 
   renderRows(letrasHebraico, letrasValor);
+  setResultadoVisible(valorNumerico > 0);
 
   if (valorNumerico > 0) {
     resultadoValor.textContent = `Valor Numérico: ${valorNumerico}`;
@@ -116,10 +157,9 @@ function calcularGematria(word) {
 function insertAtCursor(text) {
   const start = input.selectionStart ?? input.value.length;
   const end = input.selectionEnd ?? input.value.length;
-  input.value = input.value.slice(0, start) + text + input.value.slice(end);
+  const value = input.value.slice(0, start) + text + input.value.slice(end);
   const pos = start + text.length;
-  input.setSelectionRange(pos, pos);
-  input.focus();
+  updateInputValue(value, pos);
 }
 
 function removeAtCursor() {
@@ -127,14 +167,12 @@ function removeAtCursor() {
   const end = input.selectionEnd ?? input.value.length;
 
   if (start !== end) {
-    input.value = input.value.slice(0, start) + input.value.slice(end);
-    input.setSelectionRange(start, start);
+    updateInputValue(input.value.slice(0, start) + input.value.slice(end), start);
     return;
   }
 
   if (start > 0) {
-    input.value = input.value.slice(0, start - 1) + input.value.slice(end);
-    input.setSelectionRange(start - 1, start - 1);
+    updateInputValue(input.value.slice(0, start - 1) + input.value.slice(end), start - 1);
   }
 }
 
@@ -220,8 +258,14 @@ input.addEventListener("keydown", (event) => {
   }
 });
 
+input.addEventListener("input", () => {
+  const cursorPosition = input.selectionStart ?? input.value.length;
+  updateInputValue(input.value, cursorPosition);
+});
+
 calcularBtn.addEventListener("click", () => {
   calcularGematria(input.value);
 });
 
 renderKeyboard();
+setResultadoVisible(false);
